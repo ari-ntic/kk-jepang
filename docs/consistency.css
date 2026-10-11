@@ -1,0 +1,4 @@
+input.auto-field,select.auto-field{background:#edf3ed;border-color:#bdcec1;color:#37564c;opacity:1;cursor:default}
+.field small.auto-hint{color:#236859;font-size:11px}
+.field small.field-error{color:#a03e2b;font-size:12px;margin-top:2px}
+.field:has(.field-error) input,.field:has(.field-error) select{border-color:#b3553c}

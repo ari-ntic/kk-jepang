@@ -1,0 +1,1 @@
+(()=>{const link=document.querySelector('#open-sheet'),note=document.querySelector('#review-status'),url=KK_CONFIG.reviewSheetUrl;if(/^https:\/\/docs\.google\.com\/spreadsheets\/d\/[A-Za-z0-9_-]+(?:\/[^]*)?$/.test(url)){link.href=url;link.hidden=false;}else note.textContent='Google Sheet belum disambungkan. Isi reviewSheetUrl pada config.js setelah Sheet dibuat.';})();
