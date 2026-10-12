@@ -15,7 +15,42 @@ function updateCount(){[...members.children].forEach((card,i)=>{card.querySelect
 function message(s){const box=document.querySelector('#message');box.textContent=s;box.hidden=false;clearTimeout(timer);timer=setTimeout(()=>box.hidden=true,6500);}
 function valid(section){for(const el of section.querySelectorAll('input,select')){if(el.closest('[hidden]')||el.dataset.datePart)continue;if(el.required&&!el.value.trim())el.setCustomValidity('Kolom ini wajib diisi.');if(!el.checkValidity()){const card=el.closest('details');if(card)card.open=true;el.reportValidity();return false;}}return true;}
 function rawCollect(){const h={};for(const el of document.querySelector('#step-0').querySelectorAll('input'))if(el.name)h[el.name]=el.value.trim();const list=[...members.children].map(card=>{const m={};for(const el of card.querySelectorAll('input,select'))if(el.name)m[el.name]=el.value.trim();return m;});return {household:h,members:list};}
+// Nama orang tua anak diisi sebagai saran; perubahan manual dipertahankan.
+for (const event of ['input', 'change']) {
+ members.addEventListener(event, e => {
+  if (e.isTrusted && ['father', 'mother'].includes(e.target.name)) {
+   e.target.dataset.parentManual = 'true';
+  }
+ });
+}
+function suggestChildParents() {
+ const cards = [...members.children];
+ const value = (card, key) => card.querySelector(`[name="${key}"]`).value.trim();
+ const heads = cards.filter(card => value(card, 'relationship') === 'Kepala Keluarga');
+ const partners = cards.filter(card => ['Suami', 'Istri'].includes(value(card, 'relationship')));
+ if (heads.length !== 1 || partners.length !== 1) return;
+ const head = heads[0], partner = partners[0];
+ const headName = document.querySelector('#h-head').value.trim();
+ const partnerName = value(partner, 'name');
+ let father = '', mother = '';
+ if (value(head, 'sex') === 'Laki-laki' && value(partner, 'relationship') === 'Istri' && value(partner, 'sex') === 'Perempuan') {
+  father = headName; mother = partnerName;
+ } else if (value(head, 'sex') === 'Perempuan' && value(partner, 'relationship') === 'Suami' && value(partner, 'sex') === 'Laki-laki') {
+  father = partnerName; mother = headName;
+ } else return;
+ for (const card of cards) {
+  if (value(card, 'relationship') !== 'Anak') continue;
+  for (const [key, suggestion] of [['father', father], ['mother', mother]]) {
+   const input = card.querySelector(`[name="${key}"]`);
+   if (input.dataset.parentManual === 'true') continue;
+   if (input.value && input.dataset.parentAuto !== 'true') continue;
+   input.value = suggestion;
+   input.dataset.parentAuto = 'true';
+  }
+ }
+}
 function syncFamily(){
+ suggestChildParents();
  const data=rawCollect(),state=KKFamily.reconcile(data.household,data.members);
  for(const el of form.querySelectorAll('input,select'))el.setCustomValidity('');
  for(const error of members.querySelectorAll('.field-error'))error.remove();
