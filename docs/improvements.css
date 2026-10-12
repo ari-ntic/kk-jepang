@@ -4,3 +4,6 @@ input.date-source.auto-field {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+.preview-scroll {
+  overscroll-behavior: auto;
+}
