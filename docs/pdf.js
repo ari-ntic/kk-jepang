@@ -27,7 +27,12 @@ function render(canvas,data){
  })};
 canvas.width=W*3;canvas.height=H*3;const ctx=canvas.getContext('2d');ctx.scale(3,3);ctx.fillStyle='white';ctx.fillRect(0,0,W,H);text(ctx,'日本語訳',40,40,125,25,16,true);text(ctx,'Terjemahan Kartu Keluarga',40,66,220,14,8);text(ctx,'家族票',230,40,670,35,25,true,'center');text(ctx,`No. ${data.household.kk}`,250,77,630,23,17,false,'center');
  const h=data.household;const left=[['世帯主氏名',h.head],['住所',h.address],['RT / RW',h.rt],['郵便番号',h.postcode]];const right=[['村・行政区',h.village],['郡',h.district],['県・市',h.city],['州',h.province]];
- for(let i=0;i<4;i++){text(ctx,left[i][0],40,101+i*12,110,12,8);text(ctx,`: ${left[i][1]||'-'}`,150,101+i*12,440,12,8);text(ctx,right[i][0],670,101+i*12,100,12,8);text(ctx,`: ${right[i][1]||'-'}`,770,101+i*12,310,12,8);}
+ for(let i=0;i<4;i++){
+  text(ctx,left[i][0],40,99+i*12,110,16,9);
+  text(ctx,`: ${left[i][1]||'-'}`,150,99+i*12,440,16,9);
+  text(ctx,right[i][0],670,99+i*12,100,16,9);
+  text(ctx,`: ${right[i][1]||'-'}`,770,99+i*12,310,16,9);
+}
  const translated=(m,k)=>m[k]==='__other'?m[k+'Japanese']:kkTranslate(k,m[k]);
  const first=data.members.map((m,i)=>[String(i+1),m.name,m.nik,translated(m,'sex'),m.birthplace,date(m.birthdate),translated(m,'religion'),translated(m,'education'),translated(m,'job'),translated(m,'blood')]);
  grid(ctx,157,[24,228,102,50,126,65,95,134,163,56],['番号','氏名','住民識別番号\nNIK','性別','出生地','生年月日','宗教','学歴','職業','血液型'],['','(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)','(9)'],first);
