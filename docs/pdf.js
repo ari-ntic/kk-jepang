@@ -10,8 +10,13 @@ function text(ctx,value,x,y,w,h,size=9,bold=false,align='left'){
  const fontSize=parseFloat(ctx.font.match(/([\d.]+)px/)[1]);if(lines.length*fontSize*1.25>h-4)throw new Error('Teks terlalu panjang untuk PDF. Pendekkan keterangan atau nama jabatan.');
  ctx.fillStyle='#000000';ctx.textAlign=align;ctx.textBaseline='middle';const tx=align==='center'?x+w/2:x+4;let yy=y+h/2-(lines.length-1)*fontSize*1.25/2;for(const line of lines){ctx.fillText(line,tx,yy);yy+=fontSize*1.25;}
 }
-function cell(ctx,s,x,y,w,h,bold=false,size=8){ctx.strokeStyle='#000000';ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);text(ctx,s,x,y,w,h,size,bold,'center');}
-function grid(ctx,y,widths,labels,numbers,data){let x=40;const hh=32,nh=12,rh=18;for(let i=0;i<widths.length;i++){cell(ctx,labels[i],x,y,widths[i],hh,true);cell(ctx,numbers[i],x,y+hh,widths[i],nh,false,7);for(let r=0;r<10;r++)cell(ctx,data[r]?.[i]??(i===0?String(r+1):'-'),x,y+hh+nh+r*rh,widths[i],rh,false,i===2?8:9);x+=widths[i];}}
+function cell(ctx,s,x,y,w,h,bold=false,size=8,align='center'){
+  ctx.strokeStyle='#000000';
+  ctx.lineWidth=1;
+  ctx.strokeRect(x,y,w,h);
+  text(ctx,s,x,y,w,h,size,bold,align);
+}
+function grid(ctx,y,widths,labels,numbers,data){let x=40;const hh=32,nh=12,rh=18;for(let i=0;i<widths.length;i++){cell(ctx,labels[i],x,y,widths[i],hh,true);cell(ctx,numbers[i],x,y+hh,widths[i],nh,false,7);for(let r=0;r<10;r++)cell(ctx,data[r]?.[i]??(i===0?String(r+1):'-'),x,y+hh+nh+r*rh,widths[i],rh,false,i===2?8:9,i===1?'left':'center');x+=widths[i];}}
 function render(canvas,data){
  // Format huruf hanya pada data KK; data asli tidak diubah.
  const upper=value=>String(value??'').toLocaleUpperCase('id-ID');
