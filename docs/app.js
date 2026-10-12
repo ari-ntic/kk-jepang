@@ -3,8 +3,8 @@ const form=document.querySelector('#kk-form'),members=document.querySelector('#m
 const household=[['kk','Nomor KK','text',true,'16 digit sesuai KK'],['head','Nama kepala keluarga','text',true,'Nama Latin sesuai KK'],['address','Alamat','text',true,'Jangan menerjemahkan nama jalan',true],['rt','RT / RW','text',true,'Contoh: 001/002'],['postcode','Kode pos','text',true,'5 digit'],['village','Desa / Kelurahan','text',true],['district','Kecamatan','text',true],['city','Kabupaten / Kota','text',true],['province','Provinsi','text',true]];
 const issue = [
   ['issuedate','Tanggal dikeluarkan','date',true],
-  ['official','Nama pejabat','text',false,'Opsional, salin jika tercantum'],
-  ['nip','NIP pejabat','text',false,'Opsional, simpan angka nol di depan']
+  ['official','Nama pejabat','text',true],
+  ['nip','NIP pejabat','text',true,'Simpan angka nol di depan']
 ];
 const defs=[['relationship','Hubungan dalam keluarga','select',true,'Pilih dahulu agar isian otomatis mengikuti hubungan.',true],['name','Nama lengkap','text',true],['nik','NIK','text',true,'16 digit'],['sex','Jenis kelamin','select',true],['birthplace','Tempat lahir','text',true],['birthdate','Tanggal lahir','date',true],['religion','Agama','select',true],['education','Pendidikan','select',true],['job','Jenis pekerjaan','select',true],['blood','Golongan darah','select',true],['marital','Status perkawinan','select',true],['marriagedate','Tanggal perkawinan','date',false,'Kosongkan jika sumber berisi tanda —'],['citizenship','Kewarganegaraan','select',true],['country','Negara kewarganegaraan','text',false,'Wajib untuk WNA'],['passport','Nomor paspor','text',false],['kitap','Nomor KITAP','text',false],['father','Nama ayah','text',false,'Sesuai KK; boleh kosong jika —'],['mother','Nama ibu','text',false,'Sesuai KK; boleh kosong jika —']];
 function field(def,prefix){const [key,label,type,req,hint,wide]=def,el=document.createElement('label');el.className='field'+(wide?' wide':'');const caption=document.createElement('span');caption.textContent=label;if(req){const a=document.createElement('span');a.className='required';a.textContent=' *';caption.append(a);}el.append(caption);const input=document.createElement(type==='select'?'select':'input');input.name=key;input.id=`${prefix}-${key}`;input.required=!!req;if(type==='select'){input.add(new Option('Pilih sesuai KK',''));for(const [id] of KK_TERMS[key])input.add(new Option(id,id));if(['job','religion','education'].includes(key))input.add(new Option('Istilah lain / terjemahan manual','__other'));}else{input.type=type;input.maxLength=key==='address'?180:80;}
@@ -753,5 +753,5 @@ document.addEventListener('keydown', e => {
   demoButton.focus();
  }
 });
-addMember();KKPreview.init();KKVocabulary.init();
+addMember();KKPreview.init();KKVocabulary.init();KKWilayah.init();
 })();
