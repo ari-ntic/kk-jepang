@@ -28,8 +28,8 @@ function render(canvas,data){canvas.width=W*3;canvas.height=H*3;const ctx=canvas
  text(ctx,'世帯主',405,625,260,20,11,false,'center');
  text(ctx,'民事登録事務官',742,625,338,20,11,false,'center');
  // Kedua nama sejajar dan rata tengah.
- text(ctx,h.head,405,710,260,20,10,false,'center');
- text(ctx,h.official||'-',742,710,338,20,10,false,'center');
+ text(ctx,h.head,405,706,260,20,10,false,'center');
+ text(ctx,h.official||'-',742,706,338,20,10,false,'center');
  // NIP langsung di bawah nama pejabat.
  text(ctx,`公務員番号：${h.nip||'-'}`,742,720,338,16,8,false,'center');
  text(ctx,'日本語訳 / Terjemahan bahasa Jepang',40,738,690,16,8);return canvas;
