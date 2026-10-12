@@ -7,7 +7,7 @@ window.KK_TERMS={
  marital:[['Belum Kawin','未婚'],['Kawin','既婚'],['Kawin Tercatat','既婚'],['Kawin Belum Tercatat','既婚'],['Kawin Tidak Tercatat','既婚'],['Cerai Hidup','離婚'],['Cerai Mati','死別']],
  relationship:[['Kepala Keluarga','世帯主'],['Suami','夫'],['Istri','妻'],['Anak','子'],['Menantu','子の配偶者'],['Cucu','孫'],['Orangtua','親'],['Mertua','配偶者の親'],['Famili Lain','その他の親族'],['Pembantu','家事使用人'],['Lainnya','その他']],
  citizenship:[['WNI','インドネシア'],['WNA','外国籍']],
- blood:[['A','A'],['B','B'],['AB','AB'],['O','O'],['A+','A+'],['A-','A−'],['B+','B+'],['B-','B−'],['AB+','AB+'],['AB-','AB−'],['O+','O+'],['O-','O−'],['Tidak Tahu','−']]
+ blood:[['A','A'],['B','B'],['AB','AB'],['O','O'],['A+','A+'],['A-','A-'],['B+','B+'],['B-','B-'],['AB+','AB+'],['AB-','AB-'],['O+','O+'],['O-','O-'],['Tidak Tahu','−']]
 };
 window.kkTranslate = (key, value) => {
   if (key === 'blood' && (!value || value === '-' || value === 'Tidak Tahu')) {
