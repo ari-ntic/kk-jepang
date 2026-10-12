@@ -18,7 +18,9 @@ function render(canvas,data){
  const title=value=>String(value??'').toLocaleLowerCase('id-ID').replace(/\p{L}[\p{L}\p{M}]*/gu,word=>word[0].toLocaleUpperCase('id-ID')+word.slice(1));
  const household={...data.household};
  for(const key of ['head','official'])household[key]=upper(household[key]);
- for(const key of ['address','village','district','city','province'])household[key]=title(household[key]);
+ household.address=upper(household.address);
+ for(const key of ['village','district','city','province'])
+ household[key]=title(household[key]);
  data={...data,household,members:data.members.map(member=>{
   const result={...member};
   for(const key of ['name','father','mother'])result[key]=upper(result[key]);
@@ -35,7 +37,7 @@ canvas.width=W*3;canvas.height=H*3;const ctx=canvas.getContext('2d');ctx.scale(3
 }
  const translated=(m,k)=>m[k]==='__other'?m[k+'Japanese']:kkTranslate(k,m[k]);
  const first=data.members.map((m,i)=>[String(i+1),m.name,m.nik,translated(m,'sex'),m.birthplace,date(m.birthdate),translated(m,'religion'),translated(m,'education'),translated(m,'job'),translated(m,'blood')]);
- grid(ctx,157,[24,228,102,50,126,65,95,134,163,56],['番号','氏名','住民識別番号\nNIK','性別','出生地','生年月日','宗教','学歴','職業','血液型'],['','(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)','(9)'],first);
+ grid(ctx,157,[24,228,102,50,126,85,95,134,143,56],['番号','氏名','住民識別番号\nNIK','性別','出生地','生年月日','宗教','学歴','職業','血液型'],['','(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)','(9)'],first);
  const second=data.members.map((m,i)=>[String(i+1),translated(m,'marital'),date(m.marriagedate),translated(m,'relationship'),m.citizenship==='WNA'?m.country:translated(m,'citizenship'),m.passport,m.kitap,m.father,m.mother]);
  const y=391,ws=[24,143,73,129,101,81,85,203,204];let x=40;
  // Kelompok Dokumen Imigrasi dan Nama Orang Tua mengikuti header gabungan sumber.
