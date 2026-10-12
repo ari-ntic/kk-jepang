@@ -8,9 +8,9 @@ function text(ctx,value,x,y,w,h,size=9,bold=false,align='left'){
  const content=safe(value);let lines=[];
  for(let s=size;s>=5;s-=.5){ctx.font=`${bold?'600':'400'} ${s}px ${FONT}`;lines=[];for(const para of content.split('\n')){let row='';for(const c of para){if(row&&ctx.measureText(row+c).width>w-8){lines.push(row);row=c;}else row+=c;}lines.push(row);}if(lines.length*s*1.25<=h-4)break;}
  const fontSize=parseFloat(ctx.font.match(/([\d.]+)px/)[1]);if(lines.length*fontSize*1.25>h-4)throw new Error('Teks terlalu panjang untuk PDF. Pendekkan keterangan atau nama jabatan.');
- ctx.fillStyle='#172322';ctx.textAlign=align;ctx.textBaseline='middle';const tx=align==='center'?x+w/2:x+4;let yy=y+h/2-(lines.length-1)*fontSize*1.25/2;for(const line of lines){ctx.fillText(line,tx,yy);yy+=fontSize*1.25;}
+ ctx.fillStyle='#000000';ctx.textAlign=align;ctx.textBaseline='middle';const tx=align==='center'?x+w/2:x+4;let yy=y+h/2-(lines.length-1)*fontSize*1.25/2;for(const line of lines){ctx.fillText(line,tx,yy);yy+=fontSize*1.25;}
 }
-function cell(ctx,s,x,y,w,h,bold=false,size=8){ctx.strokeStyle='#5b6661';ctx.lineWidth=.6;ctx.strokeRect(x,y,w,h);text(ctx,s,x,y,w,h,size,bold,'center');}
+function cell(ctx,s,x,y,w,h,bold=false,size=8){ctx.strokeStyle='#000000';ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);text(ctx,s,x,y,w,h,size,bold,'center');}
 function grid(ctx,y,widths,labels,numbers,data){let x=40;const hh=32,nh=12,rh=18;for(let i=0;i<widths.length;i++){cell(ctx,labels[i],x,y,widths[i],hh,true);cell(ctx,numbers[i],x,y+hh,widths[i],nh,false,7);for(let r=0;r<10;r++)cell(ctx,data[r]?.[i]??(i===0?String(r+1):'-'),x,y+hh+nh+r*rh,widths[i],rh,false,i===2?8:9);x+=widths[i];}}
 function render(canvas,data){canvas.width=W*3;canvas.height=H*3;const ctx=canvas.getContext('2d');ctx.scale(3,3);ctx.fillStyle='white';ctx.fillRect(0,0,W,H);text(ctx,'日本語訳',40,22,125,25,16,true);text(ctx,'Terjemahan Kartu Keluarga',40,48,220,14,8);text(ctx,'家族カード（KARTU KELUARGA）',230,17,670,35,25,true,'center');text(ctx,`No. ${data.household.kk}`,250,54,630,23,17,false,'center');
  const h=data.household;const left=[['世帯主氏名',h.head],['住所',h.address],['RT / RW',h.rt],['郵便番号',h.postcode]];const right=[['村・行政区',h.village],['郡',h.district],['県・市',h.city],['州',h.province]];
