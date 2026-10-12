@@ -9,4 +9,11 @@ window.KK_TERMS={
  citizenship:[['WNI','インドネシア'],['WNA','外国籍']],
  blood:[['A','A'],['B','B'],['AB','AB'],['O','O'],['A+','A+'],['A-','A−'],['B+','B+'],['B-','B−'],['AB+','AB+'],['AB-','AB−'],['O+','O+'],['O-','O−'],['Tidak Tahu','−']]
 };
-window.kkTranslate=(key,value)=>value==='-'? '—':(KK_TERMS[key]?.find(pair=>pair[0]===value)?.[1]||value||'—');
+window.kkTranslate = (key, value) => {
+  if (key === 'blood' && (!value || value === '-' || value === 'Tidak Tahu')) {
+    return '-';
+  }
+  return value === '-'
+    ? '—'
+    : (KK_TERMS[key]?.find(pair => pair[0] === value)?.[1] || value || '—');
+};
