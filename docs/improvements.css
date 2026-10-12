@@ -7,3 +7,6 @@ input.date-source.auto-field {
 .preview-scroll {
   overscroll-behavior: auto;
 }
+#issue-fields {
+  grid-template-columns: minmax(0, 1fr);
+}
