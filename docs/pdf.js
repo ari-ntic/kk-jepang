@@ -25,13 +25,13 @@ function render(canvas,data){canvas.width=W*3;canvas.height=H*3;const ctx=canvas
  // Tanggal terbit: dekat di bawah tabel.
  text(ctx,`発行日：${date(h.issuedate)}`,40,625,330,20,10);
  // Kedua judul sejajar dan rata tengah.
- text(ctx,'世帯主',405,625,260,20,11,true,'center');
- text(ctx,'民事登録事務官',742,625,338,20,11,true,'center');
+ text(ctx,'世帯主',405,625,260,20,11,false,'center');
+ text(ctx,'民事登録事務官',742,625,338,20,11,false,'center');
  // Kedua nama sejajar dan rata tengah.
- text(ctx,h.head,405,700,260,20,10,false,'center');
- text(ctx,h.official||'-',742,700,338,20,10,false,'center');
+ text(ctx,h.head,405,710,260,20,10,false,'center');
+ text(ctx,h.official||'-',742,710,338,20,10,false,'center');
  // NIP langsung di bawah nama pejabat.
- text(ctx,`公務員番号（NIP）：${h.nip||'-'}`,742,720,338,16,8,false,'center');
+ text(ctx,`公務員番号：${h.nip||'-'}`,742,720,338,16,8,false,'center');
  text(ctx,'日本語訳 / Terjemahan bahasa Jepang',40,738,690,16,8);return canvas;
 }
 function pdf(canvas){const jpeg=canvas.toDataURL('image/jpeg',.97).split(',')[1];const binary=atob(jpeg),jpg=Uint8Array.from(binary,c=>c.charCodeAt(0)),enc=new TextEncoder();const chunks=[],offsets=[0];let length=0;function add(v){const b=typeof v==='string'?enc.encode(v):v;chunks.push(b);length+=b.length;}function obj(id,body){offsets[id]=length;add(`${id} 0 obj\n${body}\nendobj\n`);}add('%PDF-1.4\n');obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 841.89 595.28] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>');offsets[4]=length;add(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpg.length} >>\nstream\n`);add(jpg);add('\nendstream\nendobj\n');const draw='q\n841.89 0 0 595.28 0 0 cm\n/Im0 Do\nQ\n';obj(5,`<< /Length ${enc.encode(draw).length} >>\nstream\n${draw}endstream`);const start=length;add('xref\n0 6\n0000000000 65535 f \n');for(let i=1;i<=5;i++)add(`${String(offsets[i]).padStart(10,'0')} 00000 n \n`);add(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${start}\n%%EOF\n`);return new Blob(chunks,{type:'application/pdf'});}
