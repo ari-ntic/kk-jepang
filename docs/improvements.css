@@ -10,3 +10,11 @@ input.date-source.auto-field {
 #issue-fields {
   grid-template-columns: minmax(0, 1fr);
 }
+/* Pilihan tiga contoh fiktif. Tambahkan di akhir improvements.css. */
+.demo-picker{position:relative;flex-shrink:0}
+.demo-choices{position:absolute;right:0;top:100%;z-index:5;display:grid;gap:6px;min-width:150px;padding:8px;background:#fff;border:1px solid #cdd8d0;border-radius:10px;box-shadow:0 8px 24px #183b3720}
+.demo-choices[hidden]{display:none!important}
+.demo-choices button{font:inherit;text-align:left;padding:10px 14px;min-height:44px;background:#f5f8f3;color:#183b37;border:1px solid #dce3da;border-radius:6px;cursor:pointer}
+.demo-choices button:hover{background:#edf6f1}
+.demo-choices button:focus-visible{outline:2px solid #236859;outline-offset:2px}
+@media(max-width:650px){.demo-picker{max-width:145px}.demo-picker>#demo{font-size:12px}}
