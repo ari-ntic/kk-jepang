@@ -6,7 +6,7 @@ const safe=v=>String(v||'-');
 function date(v){if(!v)return '-';const [y,m,d]=v.split('-');return `${y}年${Number(m)}月${Number(d)}日`;}
 function text(ctx,value,x,y,w,h,size=9,bold=false,align='left'){
  const content=safe(value);let lines=[];
- for(let s=size;s>=5;s-=.5){ctx.font=`${bold?'600':'400'} ${s}px ${FONT}`;lines=[];for(const para of content.split('\n')){let row='';for(const c of para){if(row&&ctx.measureText(row+c).width>w-8){lines.push(row);row=c;}else row+=c;}lines.push(row);}if(lines.length*s*1.25<=h-4)break;}
+ for(let s=size;s>=5;s-=.5){ctx.font=`${bold?'600':'500'} ${s}px ${FONT}`;lines=[];for(const para of content.split('\n')){let row='';for(const c of para){if(row&&ctx.measureText(row+c).width>w-8){lines.push(row);row=c;}else row+=c;}lines.push(row);}if(lines.length*s*1.25<=h-4)break;}
  const fontSize=parseFloat(ctx.font.match(/([\d.]+)px/)[1]);if(lines.length*fontSize*1.25>h-4)throw new Error('Teks terlalu panjang untuk PDF. Pendekkan keterangan atau nama jabatan.');
  ctx.fillStyle='#000000';ctx.textAlign=align;ctx.textBaseline='middle';const tx=align==='center'?x+w/2:x+4;let yy=y+h/2-(lines.length-1)*fontSize*1.25/2;for(const line of lines){ctx.fillText(line,tx,yy);yy+=fontSize*1.25;}
 }
