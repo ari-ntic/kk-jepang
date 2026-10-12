@@ -17,3 +17,50 @@ window.kkTranslate = (key, value) => {
     ? '—'
     : (KK_TERMS[key]?.find(pair => pair[0] === value)?.[1] || value || '—');
 };
+window.kkUpper = value =>
+  String(value ?? '').toLocaleUpperCase('id-ID');
+
+window.kkTitle = value =>
+  String(value ?? '')
+    .toLocaleLowerCase('id-ID')
+    .replace(/\p{L}[\p{L}\p{M}]*/gu, word =>
+      word[0].toLocaleUpperCase('id-ID') + word.slice(1)
+    );
+
+window.kkFormatData = data => {
+  const result = {
+    household: { ...data.household },
+    members: data.members.map(member => ({ ...member }))
+  };
+
+  // Nama orang: huruf kapital seluruhnya.
+  for (const key of ['head', 'official']) {
+    result.household[key] = kkUpper(result.household[key]);
+  }
+
+  // Data alamat: huruf awal setiap kata kapital.
+  for (const key of [
+    'address', 'village', 'district', 'city', 'province'
+  ]) {
+    result.household[key] = kkTitle(result.household[key]);
+  }
+
+  for (const member of result.members) {
+    for (const key of ['name', 'father', 'mother']) {
+      member[key] = kkUpper(member[key]);
+    }
+
+    for (const key of ['birthplace', 'country']) {
+      member[key] = kkTitle(member[key]);
+    }
+
+    // Istilah Indonesia yang diketik manual.
+    for (const key of [
+      'jobOriginal', 'religionOriginal', 'educationOriginal'
+    ]) {
+      if (member[key]) member[key] = kkTitle(member[key]);
+    }
+  }
+
+  return result;
+};
