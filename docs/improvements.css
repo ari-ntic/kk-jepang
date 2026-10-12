@@ -18,3 +18,21 @@ input.date-source.auto-field {
 .demo-choices button:hover{background:#edf6f1}
 .demo-choices button:focus-visible{outline:2px solid #236859;outline-offset:2px}
 @media(max-width:650px){.demo-picker{max-width:145px}.demo-picker>#demo{font-size:12px}}
+/* Menjaga kotak 翻訳 tetap utuh di PC dan HP. */
+.brand {
+  min-width: 0;
+}
+
+.brand-icon {
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  white-space: nowrap;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.brand > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
