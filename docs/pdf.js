@@ -41,12 +41,15 @@ canvas.width=W*3;canvas.height=H*3;const ctx=canvas.getContext('2d');ctx.scale(3
   text(ctx,`: ${right[i][1]||'-'}`,770,99+i*12,310,16,9);
 }
  const translated=(m,k)=>m[k]==='__other'?m[k+'Japanese']:kkTranslate(k,m[k]);
+ const legacy=data.format==='legacy';
  const first=data.members.map((m,i)=>[String(i+1),m.name,m.nik,translated(m,'sex'),m.birthplace,date(m.birthdate),translated(m,'religion'),translated(m,'education'),translated(m,'job'),translated(m,'blood')]);
- grid(ctx,157,[24,244,102,50,126,85,95,134,143,40],['番号','氏名','住民識別番号','性別','出生地','生年月日','宗教','学歴','職業','血液型'],['','(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)','(9)'],first);
+ if(legacy)grid(ctx,157,[24,244,102,50,126,85,95,134,183],['番号','氏名','住民識別番号','性別','出生地','生年月日','宗教','学歴','職業'],['','(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)'],first.map(row=>row.slice(0,-1)));
+ else grid(ctx,157,[24,244,102,50,126,85,95,134,143,40],['番号','氏名','住民識別番号','性別','出生地','生年月日','宗教','学歴','職業','血液型'],['','(1)','(2)','(3)','(4)','(5)','(6)','(7)','(8)','(9)'],first);
  const second=data.members.map((m,i)=>[String(i+1),translated(m,'marital'),date(m.marriagedate),translated(m,'relationship'),m.citizenship==='WNA'?m.country:translated(m,'citizenship'),m.passport,m.kitap,m.father,m.mother]);
- const y=391,ws=[24,143,73,129,101,81,85,203,204];let x=40;
+ if(legacy)for(const row of second)row.splice(2,1);
+ const y=391,ws=legacy?[24,163,149,111,91,94,205,206]:[24,143,73,129,101,81,85,203,204];let x=40;
  // Kelompok Dokumen Imigrasi dan Nama Orang Tua mengikuti header gabungan sumber.
- const labels=['番号','婚姻状況','婚姻日','世帯主との続柄','国籍'];for(let i=0;i<5;i++){cell(ctx,labels[i],x,y,ws[i],32,true);x+=ws[i];}cell(ctx,'出入国関係書類',x,y,ws[5]+ws[6],14,true);cell(ctx,'旅券番号',x,y+14,ws[5],18,true);cell(ctx,'KITAP 番号',x+ws[5],y+14,ws[6],18,true);x+=ws[5]+ws[6];cell(ctx,'父母の氏名',x,y,ws[7]+ws[8],14,true);cell(ctx,'父',x,y+14,ws[7],18,true);cell(ctx,'母',x+ws[7],y+14,ws[8],18,true);x=40;for(let i=0;i<ws.length;i++){cell(ctx,i===0?'':`(${i+9})`,x,y+32,ws[i],12,false,7);for(let r=0;r<10;r++)cell(ctx,second[r]?.[i]??(i===0?String(r+1):'-'),x,y+44+r*18,ws[i],18,false,9);x+=ws[i];}
+ const labels=legacy?['番号','婚姻状況','世帯主との続柄','国籍']:['番号','婚姻状況','婚姻日','世帯主との続柄','国籍'];for(let i=0;i<labels.length;i++){cell(ctx,labels[i],x,y,ws[i],32,true);x+=ws[i];}const doc=labels.length,parent=doc+2;cell(ctx,'出入国関係書類',x,y,ws[doc]+ws[doc+1],14,true);cell(ctx,'旅券番号',x,y+14,ws[doc],18,true);cell(ctx,'KITAP 番号',x+ws[doc],y+14,ws[doc+1],18,true);x+=ws[doc]+ws[doc+1];cell(ctx,'父母の氏名',x,y,ws[parent]+ws[parent+1],14,true);cell(ctx,'父',x,y+14,ws[parent],18,true);cell(ctx,'母',x+ws[parent],y+14,ws[parent+1],18,true);x=40;for(let i=0;i<ws.length;i++){cell(ctx,i===0?'':`(${i+(legacy?8:9)})`,x,y+32,ws[i],12,false,7);for(let r=0;r<10;r++)cell(ctx,second[r]?.[i]??(i===0?String(r+1):'-'),x,y+44+r*18,ws[i],18,false,9);x+=ws[i];}
  // Tanggal terbit: dekat di bawah tabel.
  text(ctx,`発行日：${date(h.issuedate)}`,40,625,330,20,10);
  // Kedua judul sejajar dan rata tengah.

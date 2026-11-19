@@ -36,3 +36,12 @@ input.date-source.auto-field {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+/* Kenali format dari kolom sumber. Tidak ada pilihan bawaan. */
+.kk-format-question{min-width:0;margin:0 0 28px;padding:18px;border:1px solid #bad4c9;border-radius:10px;background:#f5f8f3}
+.kk-format-question legend{padding:0 6px;font-size:15px;font-weight:600}
+.kk-format-question p{margin:0 0 12px;font-size:13px;color:#697a73}
+.kk-format-options{display:flex;flex-wrap:wrap;gap:12px}
+.kk-format-options label{display:flex;align-items:center;gap:10px;min-height:46px;padding:10px 16px;background:white;border:1px solid #cdd8d0;border-radius:8px;cursor:pointer}
+.kk-format-options input{width:18px;height:18px;min-height:18px;margin:0;accent-color:#236859}
+.kk-format-options label:has(input:checked){border-color:#236859;background:#edf6f1}

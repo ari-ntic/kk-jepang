@@ -1,5 +1,17 @@
 (()=>{
 const form=document.querySelector('#kk-form'),members=document.querySelector('#members');let current=0,serial=0,timer,pdfNumber=0;
+// Pilih berdasarkan kolom pada sumber, bukan menebak usia dokumen.
+const selectedFormat=()=>form.querySelector('[name="kkFormat"]:checked')?.value;
+function applyFormat(){
+ const legacy=selectedFormat()==='legacy';
+ document.querySelector('#marriage-auto-hint').hidden=legacy;
+ for(const input of members.querySelectorAll('[name="blood"],[name="marriagedate"]')){
+  input.closest('label').hidden=legacy;
+  input.required=input.name==='blood'&&!legacy;
+  input.disabled=legacy;
+  for(const part of input._dateParts||[])part.disabled=legacy||input.readOnly;
+ }
+}
 const household=[['kk','Nomor KK','text',true,'16 digit sesuai KK'],['head','Nama kepala keluarga','text',true,'Nama Latin sesuai KK'],['address','Alamat','text',true,'Jangan menerjemahkan nama jalan',true],['rt','RT / RW','text',true,'Contoh: 001/002'],['postcode','Kode pos','text',true,'5 digit'],['village','Desa / Kelurahan','text',true],['district','Kecamatan','text',true],['city','Kabupaten / Kota','text',true],['province','Provinsi','text',true]];
 const issue = [
   ['issuedate','Tanggal dikeluarkan','date',true],
@@ -14,7 +26,7 @@ function addMember(values={}){if(members.children.length>=10)return;if(!members.
 function updateCount(){[...members.children].forEach((card,i)=>{card.querySelector('summary').textContent=`${String(i+1).padStart(2,'0')} · ${card.querySelector('[name="relationship"]').value||'Pilih hubungan'} — ${card.querySelector('[name="name"]').value||'Anggota keluarga'}`;});document.querySelector('#member-count').textContent=`${members.children.length} / 10 anggota`;document.querySelector('#add-member').disabled=members.children.length>=10;}
 function message(s){const box=document.querySelector('#message');box.textContent=s;box.hidden=false;clearTimeout(timer);timer=setTimeout(()=>box.hidden=true,6500);}
 function valid(section){for(const el of section.querySelectorAll('input,select')){if(el.closest('[hidden]')||el.dataset.datePart)continue;if(el.required&&!el.value.trim())el.setCustomValidity('Kolom ini wajib diisi.');if(!el.checkValidity()){const card=el.closest('details');if(card)card.open=true;el.reportValidity();return false;}}return true;}
-function rawCollect(){const h={};for(const el of document.querySelector('#step-0').querySelectorAll('input'))if(el.name)h[el.name]=el.value.trim();const list=[...members.children].map(card=>{const m={};for(const el of card.querySelectorAll('input,select'))if(el.name)m[el.name]=el.value.trim();return m;});return {household:h,members:list};}
+function rawCollect(){const h={};for(const el of document.querySelector('#step-0').querySelectorAll('input'))if(el.name&&el.name!=='kkFormat')h[el.name]=el.value.trim();const list=[...members.children].map(card=>{const m={};for(const el of card.querySelectorAll('input,select'))if(el.name)m[el.name]=el.value.trim();if(selectedFormat()==='legacy'){m.blood='';m.marriagedate='';}return m;});return {household:h,members:list};}
 // Nama orang tua anak diisi sebagai saran; perubahan manual dipertahankan.
 for (const event of ['input', 'change']) {
  members.addEventListener(event, e => {
@@ -56,6 +68,7 @@ function syncFamily(){
  for(const error of members.querySelectorAll('.field-error'))error.remove();
  [...members.children].forEach((card,i)=>{
   for(const key of ['name','marital','marriagedate','country']){
+   if(key==='marriagedate'&&selectedFormat()==='legacy')continue;
    const input=card.querySelector(`[name="${key}"]`),locked=!!state.locks[i][key];
    const automaticValue=key==='name'?locked:key==='country'?state.members[i].citizenship!=='WNA':true;
    if(automaticValue&&input.value!==state.members[i][key])input.value=state.members[i][key]||'';
@@ -70,15 +83,15 @@ function syncFamily(){
   role.closest('label').querySelector('small').textContent=(role.value?`Bahasa Jepang: ${kkTranslate('relationship',role.value)}`:' ')+(role.value!=='Kepala Keluarga'&&state.headIndex>=0?'. Kepala Keluarga sudah dipilih pada anggota lain.':'');
  });
  for(const issue of state.issues){const input=members.children[issue.index].querySelector(`[name="${issue.key}"]`);input.setCustomValidity(issue.message);const error=document.createElement('small');error.className='field-error';error.textContent=issue.message;input.closest('label').append(error);}
- KKDates.refresh(form);updateCount();return {household:data.household,...state};
+ KKDates.refresh(form);applyFormat();updateCount();return {household:data.household,...state};
 }
-function collect(){const state=syncFamily();return {household:state.household,members:state.members};}
+function collect(){const state=syncFamily();return {format:selectedFormat(),household:state.household,members:state.members};}
 function validateMembers(){const state=syncFamily();if(!valid(document.querySelector('#step-1')))return false;
  if(state.headCount!==1){message('Pilih tepat satu anggota sebagai Kepala Keluarga, sesuai KK.');return false;}
  if(state.issues.length){const issue=state.issues[0],card=members.children[issue.index];card.open=true;card.querySelector(`[name="${issue.key}"]`).focus();message(`Anggota ${issue.index+1}: ${issue.message}`);return false;}
  for(const [i,m] of state.members.entries())for(const k of ['job','religion','education'])if(m[k]==='__other'&&!/[\u3040-\u30ff\u3400-\u9fff]/.test(m[k+'Japanese'])){message(`Padanan ${k==='job'?'pekerjaan':k==='religion'?'agama':'pendidikan'} anggota ${i+1} harus berisi teks Jepang.`);return false;}
  return true;}
-async function go(step){if(step>0&&!valid(document.querySelector('#step-0')))return;if(step===2&&!validateMembers()){if(current!==1)show(1);return;}if(step===2){try{pdfNumber++;await KKVocabulary.ready();await document.fonts.ready;KKPreview.render(collect());KKDocument.render(document.querySelector('#preview'),collect());document.querySelector('#reviewed').checked=false;document.querySelector('#download').disabled=true;document.querySelector('#download-status').textContent='';}catch(e){message(e.message);return;}}show(step);}
+async function go(step){if(step>0&&!selectedFormat()){message('Pilih Ada atau Tidak ada sesuai kolom Golongan Darah pada KK.');form.querySelector('[name="kkFormat"]').focus();return;}if(step>0&&!valid(document.querySelector('#step-0')))return;if(step===2&&!validateMembers()){if(current!==1)show(1);return;}if(step===2){try{pdfNumber++;await KKVocabulary.ready();await document.fonts.ready;KKPreview.render(collect());KKDocument.render(document.querySelector('#preview'),collect());document.querySelector('#reviewed').checked=false;document.querySelector('#download').disabled=true;document.querySelector('#download-status').textContent='';}catch(e){message(e.message);return;}}show(step);}
 function show(step){current=step;for(let i=0;i<3;i++)document.querySelector(`#step-${i}`).hidden=i!==step;for(const b of document.querySelectorAll('[data-step]')){b.classList.toggle('active',Number(b.dataset.step)===step);b.setAttribute('aria-current',Number(b.dataset.step)===step?'step':'false');}document.querySelector('.steps').scrollIntoView({behavior:'smooth',block:'start'});}
 form.addEventListener('submit',e=>e.preventDefault());for(const event of ['input','change'])form.addEventListener(event,e=>{if(e.target.closest('#step-0, #members')){pdfNumber++;syncFamily();document.querySelector('#reviewed').checked=false;document.querySelector('#download').disabled=true;}});document.querySelector('#add-member').onclick=()=>addMember();document.querySelector('#next-household').onclick=()=>{syncFamily();go(1);};document.querySelector('#next-members').onclick=()=>go(2);for(const b of document.querySelectorAll('[data-step]'))b.onclick=()=>go(Number(b.dataset.step));for(const b of document.querySelectorAll('[data-back]'))b.onclick=()=>show(Number(b.dataset.back));document.querySelector('#reviewed').onchange=e=>document.querySelector('#download').disabled=!e.target.checked;
 document.querySelector('#download').onclick=()=>{if(!document.querySelector('#reviewed').checked)return;const generation=++pdfNumber;try{const data=collect();KKDocument.render(document.querySelector('#preview'),data);const blob=KKDocument.pdf(document.querySelector('#preview')),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`Terjemahan_KK_${data.household.head.replace(/[^a-zA-Z0-9_-]/g,'_')}.pdf`;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);document.querySelector('#download-status').textContent='PDF berhasil dibuat. Periksa folder Unduhan.';KKVocabulary.afterPdf(data).then(result=>{if(result.failed&&generation===pdfNumber)document.querySelector('#download-status').textContent='PDF berhasil dibuat. Pencatatan istilah manual belum berhasil.';}).catch(()=>{});}catch(e){message(e.message);}};
